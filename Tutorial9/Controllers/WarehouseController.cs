@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tutorial9.Model.DTOs;
 using Tutorial9.Services;
+using Microsoft.Data.SqlClient;
+
 
 namespace Tutorial9.Controllers;
 
@@ -37,4 +39,23 @@ public class WarehouseController : ControllerBase
             return StatusCode(500, "Internal server error");
         }
     }
+    
+    [HttpPost("via-procedure")]
+    public async Task<IActionResult> AddViaProcedure([FromBody] WarehouseRequest request)
+    {
+        try
+        {
+            var insertedId = await _dbService.AddProductWithProcedureAsync(request);
+            return Created($"/api/warehouse/{insertedId}", new { Id = insertedId });
+        }
+        catch (SqlException e)
+        {
+            return StatusCode(500, $"SQL Error: {e.Message}");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Unexpected error");
+        }
+    }
+
 }

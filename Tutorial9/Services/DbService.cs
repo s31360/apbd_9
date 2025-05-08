@@ -170,5 +170,25 @@ public class DbService : IDbService
         await command.Transaction.RollbackAsync();
         throw;
     }
+    
 }
+    public async Task<int> AddProductWithProcedureAsync(WarehouseRequest request)
+    {
+        await using var connection = new SqlConnection(_connectionString);
+        await using var command = new SqlCommand("AddProductToWarehouse", connection);
+
+        command.CommandType = CommandType.StoredProcedure;
+
+        command.Parameters.AddWithValue("@IdProduct", request.IdProduct);
+        command.Parameters.AddWithValue("@IdWarehouse", request.IdWarehouse);
+        command.Parameters.AddWithValue("@Amount", request.Amount);
+        command.Parameters.AddWithValue("@CreatedAt", request.CreatedAt);
+
+        await connection.OpenAsync();
+
+        var result = await command.ExecuteScalarAsync();
+
+        return Convert.ToInt32(result); 
+    }
+
 }

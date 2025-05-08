@@ -6,5 +6,7 @@ public interface IDbService
     Task DoSomethingAsync();
     Task ProcedureAsync();
     Task<int> AddProductToWarehouseAsync(WarehouseRequest request);
+    Task<int> AddProductWithProcedureAsync(WarehouseRequest request);
+
 
 }
